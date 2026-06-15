@@ -3,6 +3,7 @@ from typing import Optional
 from datetime import datetime
 
 class SourceBase(BaseModel):
+    name: Optional[str] = None
     url: str
     competitor_name: str
     category: Optional[str] = None
@@ -13,6 +14,7 @@ class SourceCreate(SourceBase):
     pass
 
 class SourceUpdate(BaseModel):
+    name: Optional[str] = None
     url: Optional[str] = None
     competitor_name: Optional[str] = None
     category: Optional[str] = None

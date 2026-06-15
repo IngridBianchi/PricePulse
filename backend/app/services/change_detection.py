@@ -30,7 +30,8 @@ def detect_and_create_alerts(session: Session, current_snapshot: ProductSnapshot
             tenant_id=source.tenant_id,
             source_id=source.id,
             type="price_change",
-            message=f"Price changed for {source.competitor_name} in {source.category or 'General'}",
+            message=f"Price variation detected ({source.competitor_name})",
+            product_name=current_snapshot.title,
             old_value=str(previous_snapshot.price),
             new_value=str(current_snapshot.price),
             severity="warning" if current_snapshot.price < previous_snapshot.price else "info"
@@ -46,7 +47,8 @@ def detect_and_create_alerts(session: Session, current_snapshot: ProductSnapshot
             tenant_id=source.tenant_id,
             source_id=source.id,
             type="stock_change",
-            message=f"Stock status changed to {current_snapshot.stock_status} for {source.competitor_name}",
+            message=f"Stock status changed to {current_snapshot.stock_status}",
+            product_name=current_snapshot.title,
             old_value=previous_snapshot.stock_status,
             new_value=current_snapshot.stock_status,
             severity="critical" if current_snapshot.stock_status == "out_of_stock" else "info"

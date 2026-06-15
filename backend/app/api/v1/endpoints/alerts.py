@@ -49,3 +49,45 @@ def update_alert(
     db.commit()
     db.refresh(alert)
     return alert
+
+@router.put("/{id}/read", response_model=AlertOut)
+def mark_alert_as_read(
+    *,
+    db: Session = Depends(deps.get_db),
+    id: int,
+    current_user: User = Depends(deps.get_current_user),
+) -> Any:
+    """
+    Mark an alert as read.
+    """
+    alert = db.get(Alert, id)
+    if not alert:
+        raise HTTPException(status_code=404, detail="Alert not found")
+    if alert.tenant_id != current_user.tenant_id:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+    
+    alert.is_read = True
+    db.add(alert)
+    db.commit()
+    db.refresh(alert)
+    return alert
+
+@router.delete("/{id}", response_model=AlertOut)
+def delete_alert(
+    *,
+    db: Session = Depends(deps.get_db),
+    id: int,
+    current_user: User = Depends(deps.get_current_user),
+) -> Any:
+    """
+    Delete an alert.
+    """
+    alert = db.get(Alert, id)
+    if not alert:
+        raise HTTPException(status_code=404, detail="Alert not found")
+    if alert.tenant_id != current_user.tenant_id:
+        raise HTTPException(status_code=403, detail="Not enough permissions")
+    
+    db.delete(alert)
+    db.commit()
+    return alert

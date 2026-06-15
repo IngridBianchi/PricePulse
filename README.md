@@ -8,24 +8,20 @@ PricePulse no solo extrae datos, sino que entrega un flujo completo de informaci
 - **Automatización**: Reduce horas de trabajo manual en monitoreo de competidores.
 - **Calidad de datos**: Limpieza y normalización automática de datos inconsistentes.
 - **Integración**: Entrega de datos a través de API REST o Webhooks.
-- **Alertas**: Notificación inmediata ante cambios relevantes (precios, stock, promociones).
+- **Alertas Inteligentes**: Notificación inmediata ante cambios de precios y stock con detalles específicos del producto.
+- **Notificaciones Push**: Sistema de notificaciones nativas en el navegador para monitoreo en tiempo real.
 
 ## 🛠️ Stack Tecnológico
 
 ### Backend
 - **Lenguaje**: Python
-- **API**: FastAPI
-- **Tareas Asíncronas**: Celery
-- **Base de Datos**: PostgreSQL
-- **Colas y Caché**: Redis
+- **API**: FastAPI (con soporte CORS configurado para desarrollo)
+- **Base de Datos**: PostgreSQL + SQLModel
 
 ### Frontend
 - **Framework**: Next.js / React
-- **Estilos**: Tailwind CSS
-
-### Infraestructura
-- **Contenedores**: Docker
-- **CI/CD**: GitHub Actions
+- **Estado**: React Hooks (Polling automático de alertas)
+- **Notificaciones**: Browser Notification API
 
 ## 📦 Instalación y Configuración
 
@@ -37,22 +33,25 @@ Para ejecutar el proyecto localmente, asegúrate de tener instalado [Docker](htt
    cd PricePulse
    ```
 
-2. Configura las variables de entorno:
-   Copia el archivo `.env.example` (si existe) o crea un archivo `.env` con las variables necesarias para el backend y frontend.
-
-3. Inicia los servicios con Docker:
+2. Inicia los servicios con Docker:
    ```bash
-   docker-compose up --build
+   docker compose up --build -d
+   ```
+
+3. **Migración de Base de Datos**:
+   Si es la primera vez o has actualizado, ejecuta las migraciones para asegurar que la estructura de tablas sea correcta:
+   ```bash
+   docker exec pricepulse-api python scripts/migrate_alerts.py
+   docker exec pricepulse-api python scripts/migrate_sources.py
    ```
 
 ## 📋 Funcionalidades Principales
 
-- **Gestión de Fuentes**: Registro y configuración de URLs de competidores y productos.
-- **Scraping Robusto**: Ejecución de jobs programados en Python para extraer información de manera confiable.
-- **Pipeline de Datos**: Limpieza, estandarización y validación de los datos obtenidos.
-- **Análisis**: Visualización de historial de precios, stock y tendencias.
-- **API/Webhooks**: Integración sencilla con sistemas internos (CRM, ERP, Dashboards).
-- **Dashboard**: Panel de control para monitorear el estado de los scrapers y alertas.
+- **Gestión de Fuentes**: Registro de URLs con nombres personalizados para un mejor seguimiento de productos.
+- **Detalle de Variaciones**: Historial comparativo entre el valor anterior y el nuevo (precio/stock).
+- **Dashboard de Alertas**: Panel con filtrado, marcado de lectura y borrado de notificaciones.
+- **Notificaciones en Tiempo Real**: Polling cada 30 segundos y notificaciones de escritorio para no perder cambios críticos.
+
 
 ## 📈 Roadmap
 

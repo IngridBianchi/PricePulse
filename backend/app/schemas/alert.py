@@ -5,6 +5,7 @@ from datetime import datetime
 class AlertBase(BaseModel):
     type: str
     message: str
+    product_name: Optional[str] = None
     old_value: Optional[str] = None
     new_value: Optional[str] = None
     is_read: bool = False

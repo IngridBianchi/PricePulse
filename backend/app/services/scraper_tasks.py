@@ -30,10 +30,20 @@ def run_scraping_job(source_id: int):
             session.add(source)
             session.commit()
 
+            # Mock realistic product names
+            product_pool = [
+                "iPhone 15 Pro Max", "Samsung Galaxy S24 Ultra", "PlayStation 5 Console",
+                "MacBook Air M3", "Dell XPS 13", "Sony WH-1000XM5", "Nintendo Switch OLED",
+                "Logitech G Pro X Superlight", "iPad Pro 12.9", "GeForce RTX 4080"
+            ]
+            
+            # Use source name if set, otherwise pick from pool
+            base_name = source.name or random.choice(product_pool)
+            
             # Mock data with random price fluctuation for testing alerts
             mock_price = round(random.uniform(80.0, 120.0), 2)
             mock_data = {
-                "title": f"Mock Product for {source.competitor_name}",
+                "title": f"{base_name} - {source.competitor_name} Edition",
                 "price": mock_price,
                 "currency": "USD",
                 "stock_status": random.choice(["in_stock", "in_stock", "out_of_stock"]),

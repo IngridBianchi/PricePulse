@@ -10,22 +10,70 @@ export default function AlertsPage() {
   const [error, setError] = useState('');
   const [selectedAlert, setSelectedAlert] = useState<any>(null);
   const [showInfo, setShowInfo] = useState(true);
+  const [lastAlertId, setLastAlertId] = useState<number | null>(null);
 
-  const fetchAlerts = async () => {
+  const requestNotificationPermission = async () => {
+    if ('Notification' in window) {
+      const permission = await Notification.requestPermission();
+      return permission === 'granted';
+    }
+    return false;
+  };
+
+  const showBrowserNotification = (alert: any) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(`PricePulse: ${alert.product_name || 'Nueva Alerta'}`, {
+        body: alert.message,
+        icon: '/favicon.ico'
+      });
+    }
+  };
+
+  const fetchAlerts = async (isInitial = false) => {
     try {
-      setLoading(true);
-      const data = await apiRequest('/alerts/');
+      if (isInitial) setLoading(true);
+      const data = await apiRequest('/alerts');
+      
+      // Check for new alerts to show notification
+      if (!isInitial && data.length > 0 && lastAlertId !== null) {
+        const newAlerts = data.filter((a: any) => a.id > lastAlertId && !a.is_read);
+        if (newAlerts.length > 0) {
+          newAlerts.forEach(showBrowserNotification);
+        }
+      }
+
+      if (data.length > 0) {
+        const maxId = Math.max(...data.map((a: any) => a.id));
+        setLastAlertId(maxId);
+      }
+
       setAlerts(data);
     } catch (err: any) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      if (isInitial) setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchAlerts();
+    fetchAlerts(true);
+    requestNotificationPermission();
+
+    // Poll for new alerts every 30 seconds
+    const interval = setInterval(() => fetchAlerts(false), 30000);
+    return () => clearInterval(interval);
   }, []);
+
+  const testNotification = async () => {
+    const granted = await requestNotificationPermission();
+    if (granted) {
+      new Notification('PricePulse', {
+        body: 'Las notificaciones están activadas correctamente.',
+      });
+    } else {
+      alert('Por favor, activa las notificaciones en tu navegador.');
+    }
+  };
 
   const markAsRead = async (id: number) => {
     try {
@@ -59,6 +107,13 @@ export default function AlertsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">Alertas y Cambios Detallados</h1>
+        <button 
+          onClick={testNotification}
+          className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+        >
+          <Bell className="mr-2 h-4 w-4" />
+          Probar Notificaciones
+        </button>
       </div>
 
       {/* Explicación para el usuario */}
@@ -121,6 +176,7 @@ export default function AlertsPage() {
                           {getAlertIcon(alert.type)}
                         </div>
                         <div className="ml-4">
+                          <p className="text-sm font-bold text-primary-700">{alert.product_name || 'Producto Desconocido'}</p>
                           <p className="text-sm font-medium text-gray-900">{alert.message}</p>
                           <p className="text-sm text-gray-500">
                             {new Date(alert.created_at).toLocaleString()}
@@ -168,6 +224,11 @@ export default function AlertsPage() {
               </div>
 
               <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Producto</label>
+                  <p className="mt-1 text-sm font-bold text-gray-900">{selectedAlert.product_name || 'Desconocido'}</p>
+                </div>
+
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Mensaje</label>
                   <p className="mt-1 text-sm text-gray-900">{selectedAlert.message}</p>

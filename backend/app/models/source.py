@@ -9,6 +9,7 @@ class Source(BaseIDModel, table=True):
     __tablename__ = "sources"
 
     tenant_id: int = Field(foreign_key="tenants.id")
+    name: Optional[str] = None  # User defined name for the product
     url: str
     competitor_name: str
     category: Optional[str] = None

@@ -14,6 +14,7 @@ class Alert(BaseIDModel, table=True):
     
     type: str  # price_change, stock_change, promotion_change
     message: str
+    product_name: Optional[str] = None
     
     old_value: Optional[str] = None
     new_value: Optional[str] = None

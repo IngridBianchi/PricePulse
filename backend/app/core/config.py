@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     DATABASE_URL: Optional[str] = None
 
     REDIS_URL: str = "redis://redis:6379/0"
+    CELERY_WORKER_CONCURRENCY: int = 1
+    CELERY_WORKER_MAX_TASKS_PER_CHILD: int = 10
 
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)
 

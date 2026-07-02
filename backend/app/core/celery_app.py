@@ -7,8 +7,16 @@ celery_app = Celery(
     backend=settings.REDIS_URL
 )
 
-# Reintenta la conexión al broker al iniciar el worker
-celery_app.conf.broker_connection_retry_on_startup = True
+celery_app.conf.update(
+    broker_connection_retry=True,
+    broker_connection_retry_on_startup=True,
+    broker_use_ssl={
+        "ssl_cert_reqs": ssl.CERT_NONE,
+    },
+    redis_backend_use_ssl={
+        "ssl_cert_reqs": ssl.CERT_NONE,
+    },
+)
 
 celery_app.conf.task_routes = {
     "app.services.scraper_tasks.*": "main-queue",

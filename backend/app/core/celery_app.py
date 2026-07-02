@@ -1,6 +1,7 @@
 import ssl
 from celery import Celery
 from app.core.config import settings
+import app.services.tasks
 
 celery_app = Celery(
     "pricepulse_tasks",

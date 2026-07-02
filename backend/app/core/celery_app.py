@@ -20,7 +20,7 @@ celery_app.conf.update(
 )
 
 celery_app.conf.task_routes = {
-    "app.services.tasks.*": "main-queue",
+    "app.services.tasks.*": {"queue": "main-queue"},
 }
 
 celery_app.autodiscover_tasks(["app.services"])

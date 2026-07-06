@@ -6,7 +6,7 @@ from app.api import deps
 from app.models.user import User
 from app.models.source import Source
 from app.schemas.source import SourceCreate, SourceOut, SourceUpdate
-from app.services.scraper_tasks import run_scraping_job
+from app.services.tasks import run_scraping_job
 
 router = APIRouter()
 

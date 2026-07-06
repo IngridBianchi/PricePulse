@@ -3,7 +3,7 @@
     "builder": "DOCKERFILE"
   },
   "deploy": {
-    "startCommand": "sh -c \"uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}\"",
+    "startCommand": "sh -c \"if [ \\\"$RAILWAY_SERVICE_NAME\\\" = \\\"PricePulse\\\" ]; then uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}; else celery -A app.core.celery_app:celery_app worker --loglevel=info --concurrency=1; fi\"",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }

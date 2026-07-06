@@ -2,7 +2,7 @@
 
 PricePulse es una plataforma de inteligencia competitiva para e-commerce que automatiza la recolección, limpieza, normalización y entrega de datos de mercado. Ayuda a empresas, marcas y distribuidores a monitorear precios, stock, promociones y cambios de catálogo de sus competidores en tiempo real, permitiendo una toma de decisiones más rápida y basada en datos.
 
-## 🚀 Propuesta de Valor
+## Propuesta de Valor
 
 PricePulse no solo extrae datos, sino que entrega un flujo completo de información estructurada y lista para usar.
 - **Automatización**: Reduce horas de trabajo manual en monitoreo de competidores.

@@ -1,5 +1,7 @@
 import time
+import socket
 import logging
+from urllib.parse import urlparse, urlunparse
 from sqlmodel import create_engine, Session, SQLModel
 from .config import settings
 
@@ -9,7 +11,23 @@ if not settings.DATABASE_URL:
     # Fallback for local development if not provided via env
     settings.DATABASE_URL = f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@db:5432/{settings.POSTGRES_DB}"
 
-engine = create_engine(settings.DATABASE_URL)
+def _resolve_ipv4(url: str) -> str:
+    """Replace hostname with IPv4 address to avoid IPv6 routing issues (Railway)."""
+    parsed = urlparse(url)
+    hostname = parsed.hostname
+    if hostname:
+        try:
+            ip = socket.getaddrinfo(hostname, None, socket.AF_INET)[0][4][0]
+            if ip != hostname:
+                logger.info("Resolved %s -> %s (IPv4)", hostname, ip)
+                netloc = parsed.netloc.replace(hostname, ip, 1)
+                parsed = parsed._replace(netloc=netloc)
+                return urlunparse(parsed)
+        except Exception as e:
+            logger.warning("Failed to resolve %s to IPv4: %s", hostname, e)
+    return url
+
+engine = create_engine(_resolve_ipv4(settings.DATABASE_URL))
 
 def init_db():
     # Retry logic for DB connection to handle startup race conditions

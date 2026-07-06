@@ -7,8 +7,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Prefer IPv4 over IPv6 (Supabase DNS returns AAAA records that fail on Railway)
-RUN echo 'precedence ::ffff:0:0/96 100' >> /etc/gai.conf
+# Force IPv4 for all DNS resolution (Supabase returns AAAA records unreachable on Railway)
+RUN echo 'label ::ffff:0:0/96 4' > /etc/gai.conf && \
+    echo 'precedence ::ffff:0:0/96 100' >> /etc/gai.conf && \
+    echo 'precedence ::1/128 0' >> /etc/gai.conf
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

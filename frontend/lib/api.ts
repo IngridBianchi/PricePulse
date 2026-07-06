@@ -1,4 +1,7 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api/v1';
+const rawUrl = process.env.NEXT_PUBLIC_API_URL || '/api/v1';
+const API_URL = typeof window !== 'undefined' && window.location.protocol === 'https:' && rawUrl.startsWith('http://')
+  ? rawUrl.replace(/^http:/i, 'https:')
+  : rawUrl;
 
 export async function apiRequest(endpoint: string, options: RequestInit = {}) {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;

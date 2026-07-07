@@ -1,16 +1,24 @@
-const rawUrl = process.env.NEXT_PUBLIC_API_URL || '/api/v1';
-const API_URL = typeof window !== 'undefined' && window.location.protocol === 'https:' && rawUrl.startsWith('http://')
-  ? rawUrl.replace(/^http:/i, 'https:')
-  : rawUrl;
+function resolveApiUrl(): string {
+  const raw = process.env.NEXT_PUBLIC_API_URL || '/api/v1';
+  const isBrowser = typeof window !== 'undefined';
+  if (isBrowser && window.location.protocol === 'https:' && raw.startsWith('http://')) {
+    return raw.replace(/^http:/, 'https:');
+  }
+  return raw;
+}
+
+const API_URL = resolveApiUrl();
 
 export async function apiRequest(endpoint: string, options: RequestInit = {}) {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-  
-  const headers = {
+
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
-    ...options.headers,
   };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  Object.assign(headers, options.headers);
 
   const response = await fetch(`${API_URL}${endpoint}`, {
     ...options,

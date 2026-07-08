@@ -22,3 +22,6 @@ Thumbs.db
 
 # Docker
 .docker/
+
+# Skills
+skills-lock.json

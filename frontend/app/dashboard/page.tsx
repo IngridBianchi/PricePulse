@@ -18,9 +18,13 @@ import {
   AlertTriangle, 
   CheckCircle,
   Globe,
-  Bell
+  Bell,
+  ArrowRight,
+  XCircle,
+  Plus
 } from 'lucide-react';
 import { apiRequest } from '@/lib/api';
+import Link from 'next/link';
 
 const mockData = [
   { name: 'Lun', precio: 100 },
@@ -43,6 +47,7 @@ export default function DashboardOverview() {
     }
   });
   const [loading, setLoading] = useState(true);
+  const [showInfo, setShowInfo] = useState(true);
 
   useEffect(() => {
     async function fetchDashboardData() {
@@ -64,6 +69,29 @@ export default function DashboardOverview() {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold text-gray-900">Resumen General</h1>
+
+      {/* Onboarding banner */}
+      {showInfo && (
+        <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded-md relative">
+          <button 
+            onClick={() => setShowInfo(false)}
+            className="absolute top-2 right-2 text-indigo-400 hover:text-indigo-600"
+          >
+            <XCircle className="h-5 w-5" />
+          </button>
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <Globe className="h-5 w-5 text-indigo-400" />
+            </div>
+            <div className="ml-3 pr-8">
+              <h3 className="text-sm font-medium text-indigo-800">Primer paso: carga tus fuentes</h3>
+              <p className="mt-1 text-sm text-indigo-700">
+                Para comenzar a recibir alertas, primero agrega las URLs de los productos de tus competidores en la sección de Fuentes.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -80,6 +108,15 @@ export default function DashboardOverview() {
                 </dl>
               </div>
             </div>
+            <div className="mt-4">
+              <Link
+                href="/dashboard/sources"
+                className="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              >
+                <Plus className="-ml-1 mr-2 h-4 w-4" />
+                Cargar Fuentes
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -95,6 +132,15 @@ export default function DashboardOverview() {
                   <dd className="text-lg font-medium text-gray-900">{data.stats.alerts}</dd>
                 </dl>
               </div>
+            </div>
+            <div className="mt-4">
+              <Link
+                href="/dashboard/alerts"
+                className="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              >
+                <Bell className="-ml-1 mr-2 h-4 w-4" />
+                Ver Alertas
+              </Link>
             </div>
           </div>
         </div>

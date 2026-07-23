@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Globe, ExternalLink, RefreshCw, Trash2, Edit2, Check, XCircle } from 'lucide-react';
+import { Plus, Globe, ExternalLink, RefreshCw, Trash2, Edit2, Check, XCircle, Search, Bell } from 'lucide-react';
 import { apiRequest } from '@/lib/api';
 
 export default function SourcesPage() {
@@ -97,13 +97,15 @@ export default function SourcesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">Fuentes de Monitoreo</h1>
-        <button 
-          onClick={openCreateModal}
-          className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-        >
-          <Plus className="-ml-1 mr-2 h-5 w-5" />
-          Nueva Fuente
-        </button>
+        {sources.length > 0 && (
+          <button 
+            onClick={openCreateModal}
+            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          >
+            <Plus className="-ml-1 mr-2 h-5 w-5" />
+            Nueva Fuente
+          </button>
+        )}
       </div>
 
       {/* Explicación para el usuario */}
@@ -226,8 +228,43 @@ export default function SourcesPage() {
         {loading ? (
           <div className="p-10 text-center text-gray-500">Cargando fuentes...</div>
         ) : sources.length === 0 ? (
-          <div className="p-10 text-center text-gray-500">
-            No tienes fuentes configuradas aún. Comienza agregando una URL para monitorear.
+          <div className="px-6 py-16 text-center">
+            <div className="mx-auto h-16 w-16 bg-primary-100 rounded-full flex items-center justify-center mb-6">
+              <Globe className="h-8 w-8 text-primary-500" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Comienza a monitorear competidores
+            </h3>
+            <p className="text-sm text-gray-500 max-w-md mx-auto mb-8">
+              Agrega la URL de un producto de tu competidor y te notificaremos cuando cambie de precio o stock.
+            </p>
+            <button
+              onClick={openCreateModal}
+              className="inline-flex items-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            >
+              <Plus className="-ml-1 mr-2 h-5 w-5" />
+              Agregar Primera Fuente
+            </button>
+            <div className="mt-10 grid grid-cols-3 gap-6 max-w-lg mx-auto">
+              <div className="text-center">
+                <div className="mx-auto h-8 w-8 bg-primary-50 rounded-full flex items-center justify-center mb-2">
+                  <Plus className="h-4 w-4 text-primary-600" />
+                </div>
+                <p className="text-xs font-medium text-gray-700">Agrega la URL</p>
+              </div>
+              <div className="text-center">
+                <div className="mx-auto h-8 w-8 bg-primary-50 rounded-full flex items-center justify-center mb-2">
+                  <Search className="h-4 w-4 text-primary-600" />
+                </div>
+                <p className="text-xs font-medium text-gray-700">Monitoreo automático</p>
+              </div>
+              <div className="text-center">
+                <div className="mx-auto h-8 w-8 bg-primary-50 rounded-full flex items-center justify-center mb-2">
+                  <Bell className="h-4 w-4 text-primary-600" />
+                </div>
+                <p className="text-xs font-medium text-gray-700">Recibe alertas</p>
+              </div>
+            </div>
           </div>
         ) : (
           <ul role="list" className="divide-y divide-gray-200">
